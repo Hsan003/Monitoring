@@ -19,7 +19,7 @@ public class NotificationManager
     {
         foreach (var channel in client.Preferences.Channels)
         {
-            channel.SendNotification(message, client.Email);
+            channel.SendNotification(message, client);
         }
     }
 
