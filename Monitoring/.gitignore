@@ -1,0 +1,70 @@
+# Build results
+bin/
+obj/
+out/
+
+# User-specific files
+*.user
+*.userosscache
+*.sln.docstates
+*.sln
+
+# Logs
+*.log
+*.tlog
+*.vspscc
+
+# IDE directories
+.vs/
+.idea/
+.ionide/
+
+# Rider project files
+*.suo
+*.sln.ide/
+
+# Package management
+packages/
+node_modules/
+*.nupkg
+*.snupkg
+project.lock.json
+project.fragment.lock.json
+artifacts/
+
+# Tooling
+*.psess
+*.vspx
+*.coverage
+*.coverlet
+*.orig
+
+# Environment
+.env
+.env.*
+
+# OS-specific files
+Thumbs.db
+.DS_Store
+
+# Backup files
+*.bak
+*.swp
+*.tmp
+*.temp
+~$*
+
+# Test results
+TestResults/
+*.trx
+*.coverage
+*.coveragexml
+coverage.opencover.xml
+
+# Build directories
+Build/
+build/
+
+# Azure
+local.settings.json
+AzureFunction.json
