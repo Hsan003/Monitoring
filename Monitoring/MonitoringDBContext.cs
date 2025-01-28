@@ -1,8 +1,10 @@
+using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using Monitoring.Models;
 using Monitoring.Models.NotificationsModule;
 
-public class MonitoringDbContext : DbContext
+public class MonitoringDbContext : IdentityDbContext<IdentityUser>
 {
      public DbSet<Client> Clients { get; set; }
     public DbSet<Website> Websites { get; set; }
