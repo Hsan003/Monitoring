@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -10,9 +11,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Monitoring.Migrations
 {
     [DbContext(typeof(MonitoringDbContext))]
-    partial class MonitoringDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250128092532_AddingAnalytics")]
+    partial class AddingAnalytics
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -34,8 +37,7 @@ namespace Monitoring.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("WebsiteId")
-                        .IsUnique();
+                    b.HasIndex("WebsiteId");
 
                     b.ToTable("Analytics");
                 });
@@ -159,6 +161,9 @@ namespace Monitoring.Migrations
 
                     MySqlPropertyBuilderExtensions.UseMySqlIdentityColumn(b.Property<int>("Id"));
 
+                    b.Property<int>("AnalyticsId")
+                        .HasColumnType("int");
+
                     b.Property<int>("ClientId")
                         .HasColumnType("int");
 
@@ -173,6 +178,8 @@ namespace Monitoring.Migrations
 
                     b.HasKey("Id");
 
+                    b.HasIndex("AnalyticsId");
+
                     b.HasIndex("ClientId");
 
                     b.ToTable("Websites");
@@ -181,8 +188,8 @@ namespace Monitoring.Migrations
             modelBuilder.Entity("Monitoring.Models.Analytics", b =>
                 {
                     b.HasOne("Monitoring.Models.Website", "Website")
-                        .WithOne("Analytics")
-                        .HasForeignKey("Monitoring.Models.Analytics", "WebsiteId")
+                        .WithMany()
+                        .HasForeignKey("WebsiteId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
@@ -211,11 +218,19 @@ namespace Monitoring.Migrations
 
             modelBuilder.Entity("Monitoring.Models.Website", b =>
                 {
+                    b.HasOne("Monitoring.Models.Analytics", "Analytics")
+                        .WithMany()
+                        .HasForeignKey("AnalyticsId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
                     b.HasOne("Monitoring.Models.Client", "Client")
                         .WithMany("Websites")
                         .HasForeignKey("ClientId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+
+                    b.Navigation("Analytics");
 
                     b.Navigation("Client");
                 });
@@ -231,12 +246,6 @@ namespace Monitoring.Migrations
                         .IsRequired();
 
                     b.Navigation("Websites");
-                });
-
-            modelBuilder.Entity("Monitoring.Models.Website", b =>
-                {
-                    b.Navigation("Analytics")
-                        .IsRequired();
                 });
 #pragma warning restore 612, 618
         }

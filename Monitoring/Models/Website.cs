@@ -19,5 +19,7 @@ public class Website
     public int ClientId { get; set; }
 
     public virtual Client Client { get; set; }
+    
+    public Analytics Analytics { get; set; }
 }
 
