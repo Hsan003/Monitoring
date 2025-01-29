@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using Monitoring.Models;
+using Monitoring.Models.MonitoringModule.checker;
 using Monitoring.Models.NotificationsModule;
 
 public class MonitoringDbContext : IdentityDbContext<IdentityUser>
