@@ -1,12 +1,20 @@
 using Microsoft.AspNetCore.Mvc;
+using Monitoring.Models;
 using Monitoring.Models.DashboardModule;
 
 namespace Monitoring.Services;
 
 public class AnalyticsService
-{
-    public IActionResult GetAnalytics(GetAnalyticsRequest request)
+{private readonly CheckResultsRepository checkrepo;
+
+    public AnalyticsService(CheckResultsRepository repository)
     {
-        throw new NotImplementedException();
+        checkrepo = repository;
     }
+
+    public async Task<IEnumerable<CheckResults>> GetAnalytics(GetAnalyticsRequest request)
+    {
+        return await checkrepo.GetByAnalyticsAndTimeRangeAsync(request);
+    }
+
 }

@@ -9,10 +9,6 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddAuthorization();
 
 
-builder.Services.AddIdentityApiEndpoints<IdentityUser>()
-    .AddEntityFrameworkStores<MonitoringDbContext>();
-
-
 // Load environment variables
 DotEnv.Load();
 
@@ -26,10 +22,16 @@ var connectionString = $"Server={Environment.GetEnvironmentVariable("DB_HOST")};
 builder.Services.AddDbContext<MonitoringDbContext>(options =>
     options.UseMySql(connectionString, new MySqlServerVersion(new Version(8, 0, 33)))
 );
+
+builder.Services.AddIdentityApiEndpoints<IdentityUser>()
+    .AddEntityFrameworkStores<MonitoringDbContext>();
+builder.Services.AddControllers(); // <-- Add this line
+
 // Add services to the container.
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
+builder.Services.AddScoped<CheckResultsRepository>();
 builder.Services.AddScoped<AnalyticsService>();
 
 
@@ -52,6 +54,7 @@ if (app.Environment.IsDevelopment())
 app.UseHttpsRedirection();
 app.UseRouting();
 
+ app.MapControllers(); 
 
 
 
