@@ -6,7 +6,8 @@ public class Analytics
 {
     public int Id { get; set; }
     public ICollection<CheckResults> CheckResults { get; set; }= new List<CheckResults>();
-    [ForeignKey("Website")]
-    public int WebsiteId { get; set; }
-    public Website Website { get; set; }
+    public int WebsiteId { get; set; } // Foreign key
+    
+    [ForeignKey("WebsiteId")]
+    public Website Website { get; set; } // Navigation property (optional)
 }

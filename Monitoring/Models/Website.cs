@@ -20,6 +20,5 @@ public class Website
 
     public virtual Client Client { get; set; }
     
-    public Analytics Analytics { get; set; }
 }
 
