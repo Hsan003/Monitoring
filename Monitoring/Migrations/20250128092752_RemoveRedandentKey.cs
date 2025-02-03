@@ -37,8 +37,8 @@ namespace Monitoring.Migrations
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropIndex(
-                name: "IX_Analytics_WebsiteId",
-                table: "Analytics");
+               name: "IX_Analytics_WebsiteId",
+              table: "Analytics");
 
             migrationBuilder.AddColumn<int>(
                 name: "AnalyticsId",

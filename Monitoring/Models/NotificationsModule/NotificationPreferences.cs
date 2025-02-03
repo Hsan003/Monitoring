@@ -10,7 +10,9 @@ public class NotificationPreferences
     public int Id { get; set; }
 
     [ForeignKey("Client")]
-    public int ClientId { get; set; }
+    public string ClientId { get; set; }
+    
+    public virtual Client Client { get; set; }
 
     public int LatencyThreshold { get; set; } = 300; // Default latency threshold in ms    
 

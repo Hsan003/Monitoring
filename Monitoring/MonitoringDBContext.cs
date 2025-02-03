@@ -4,9 +4,9 @@ using Microsoft.EntityFrameworkCore;
 using Monitoring.Models;
 using Monitoring.Models.NotificationsModule;
 
-public class MonitoringDbContext : IdentityDbContext<IdentityUser>
+public class MonitoringDbContext : IdentityDbContext<Client>
 {
-     public DbSet<Client> Clients { get; set; }
+    public DbSet<Client> Clients { get; set; }
     public DbSet<Website> Websites { get; set; }
     public DbSet<NotificationLog> NotificationLogs { get; set; }
     public DbSet<NotificationPreferences> NotificationPreferences { get; set; }
@@ -15,5 +15,5 @@ public class MonitoringDbContext : IdentityDbContext<IdentityUser>
 
     public MonitoringDbContext(DbContextOptions<MonitoringDbContext> options)
         : base(options) { }
-
+    
 }

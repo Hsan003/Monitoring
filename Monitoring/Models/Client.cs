@@ -1,20 +1,19 @@
 
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
+using Microsoft.AspNetCore.Identity;
 using Monitoring.Models.NotificationsModule;
 
 namespace Monitoring.Models;
 
-public class Client
+[Table("AspNetUsers")]
+
+public class Client : IdentityUser
 {
-    [Key]
-    public int Id { get; set; }
 
     [Required]
     [MaxLength(100)]
     public string Name { get; set; }
-
-    [Required]
-    public string Email { get; set; }
 
     public virtual ICollection<Website> Websites { get; set; } = new List<Website>();
 

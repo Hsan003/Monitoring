@@ -38,9 +38,6 @@ var app = builder.Build();
 //Map Identity Routes
 app.MapIdentityApi<IdentityUser>();
 
-//Middleware
-app.UseAuthentication();
-app.UseAuthorization();
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
@@ -51,6 +48,8 @@ if (app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 app.UseRouting();
+app.UseAuthentication();
+app.UseAuthorization();
 
 
 

@@ -16,10 +16,10 @@ public class Website
     public string Status { get; set; }
 
     [ForeignKey("Client")]
-    public int ClientId { get; set; }
+    public string ClientId { get; set; }
 
     public virtual Client Client { get; set; }
     
-    public Analytics Analytics { get; set; }
+    public virtual Analytics Analytics { get; set; }
 }
 
