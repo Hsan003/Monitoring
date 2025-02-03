@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore.Metadata;
+﻿using System;
+using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.EntityFrameworkCore.Migrations;
 
 #nullable disable
@@ -6,12 +7,32 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace Monitoring.Migrations
 {
     /// <inheritdoc />
-    public partial class NotificationsModuleInitialCreate : Migration
+    public partial class InitialCreate : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.AlterDatabase()
+                .Annotation("MySql:CharSet", "utf8mb4");
+
+            migrationBuilder.CreateTable(
+                name: "Checkers",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
+                    class_name = table.Column<string>(type: "longtext", nullable: false)
+                        .Annotation("MySql:CharSet", "utf8mb4"),
+                    WebsiteId = table.Column<int>(type: "int", nullable: false),
+                    content = table.Column<string>(type: "longtext", nullable: false)
+                        .Annotation("MySql:CharSet", "utf8mb4"),
+                    retries = table.Column<int>(type: "int", nullable: false),
+                    interval = table.Column<int>(type: "int", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Checkers", x => x.Id);
+                })
                 .Annotation("MySql:CharSet", "utf8mb4");
 
             migrationBuilder.CreateTable(
@@ -98,6 +119,74 @@ namespace Monitoring.Migrations
                 })
                 .Annotation("MySql:CharSet", "utf8mb4");
 
+            migrationBuilder.CreateTable(
+                name: "Analytics",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
+                    WebsiteId = table.Column<int>(type: "int", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Analytics", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Analytics_Websites_WebsiteId",
+                        column: x => x.WebsiteId,
+                        principalTable: "Websites",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                })
+                .Annotation("MySql:CharSet", "utf8mb4");
+
+            migrationBuilder.CreateTable(
+                name: "CheckResults",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
+                    websiteId = table.Column<int>(type: "int", nullable: false),
+                    status = table.Column<int>(type: "int", nullable: false),
+                    responseTime = table.Column<int>(type: "int", nullable: false),
+                    error = table.Column<string>(type: "longtext", nullable: false)
+                        .Annotation("MySql:CharSet", "utf8mb4"),
+                    isUp = table.Column<bool>(type: "tinyint(1)", nullable: false),
+                    Timestamp = table.Column<DateTime>(type: "datetime(6)", nullable: false),
+                    AnalyticsId = table.Column<int>(type: "int", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_CheckResults", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_CheckResults_Analytics_AnalyticsId",
+                        column: x => x.AnalyticsId,
+                        principalTable: "Analytics",
+                        principalColumn: "Id");
+                    table.ForeignKey(
+                        name: "FK_CheckResults_Websites_websiteId",
+                        column: x => x.websiteId,
+                        principalTable: "Websites",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                })
+                .Annotation("MySql:CharSet", "utf8mb4");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Analytics_WebsiteId",
+                table: "Analytics",
+                column: "WebsiteId",
+                unique: true);
+
+            migrationBuilder.CreateIndex(
+                name: "IX_CheckResults_AnalyticsId",
+                table: "CheckResults",
+                column: "AnalyticsId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_CheckResults_websiteId",
+                table: "CheckResults",
+                column: "websiteId");
+
             migrationBuilder.CreateIndex(
                 name: "IX_NotificationPreferences_ClientId",
                 table: "NotificationPreferences",
@@ -114,10 +203,19 @@ namespace Monitoring.Migrations
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropTable(
+                name: "Checkers");
+
+            migrationBuilder.DropTable(
+                name: "CheckResults");
+
+            migrationBuilder.DropTable(
                 name: "NotificationLogs");
 
             migrationBuilder.DropTable(
                 name: "NotificationPreferences");
+
+            migrationBuilder.DropTable(
+                name: "Analytics");
 
             migrationBuilder.DropTable(
                 name: "Websites");

@@ -4,5 +4,5 @@ public interface IChecker
 {
     public  Task<CheckResult> check(Website website ); 
     
-    public void initialize(Dictionary<string, object> param , MonitoringDbContext context);
+    public void initialize(string content, int retries, MonitoringDbContext context);
 }

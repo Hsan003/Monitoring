@@ -9,17 +9,19 @@ using System.Threading.Tasks;
 public class SSLChecker : IChecker
 {
     private MonitoringDbContext _context;
+    public int _retries {get; set;}
 
-        public void initialize(Dictionary<string, object> param, MonitoringDbContext context)
+        public void initialize(string content, int retries, MonitoringDbContext context)
         {
             _context = context;
+            _retries = retries;
         }
     public async Task<CheckResult> check(Website website )
         {
             Console.WriteLine($"Checking SSL status for {website.Url}...");
             CheckResult checkResult = new CheckResult
             {
-                websiteId = website,
+                websiteId = website.Id,
                 Timestamp = DateTime.UtcNow
             };
 
@@ -77,6 +79,8 @@ public class SSLChecker : IChecker
                         }
                     }
                 }
+                _context.CheckResults.Add(checkResult);
+                await _context.SaveChangesAsync();
             }
             catch (Exception ex)
             {
