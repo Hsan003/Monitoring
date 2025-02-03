@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using Monitoring.Models;
+using Monitoring.Models.MonitoringModule.checker;
 using Monitoring.Models.NotificationsModule;
 
 public class MonitoringDbContext : IdentityDbContext<IdentityUser>
@@ -12,6 +13,8 @@ public class MonitoringDbContext : IdentityDbContext<IdentityUser>
     public DbSet<NotificationPreferences> NotificationPreferences { get; set; }
     public DbSet<CheckResults> CheckResults { get; set; }
     public DbSet<Analytics> Analytics { get; set; }
+    
+    public DbSet<checker_entity> Checkers { get; set; }
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         base.OnModelCreating(modelBuilder); // ✅ Ensure Identity tables are properly created

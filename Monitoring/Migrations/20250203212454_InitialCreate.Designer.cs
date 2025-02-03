@@ -11,8 +11,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Monitoring.Migrations
 {
     [DbContext(typeof(MonitoringDbContext))]
-    [Migration("20250202103812_editAnalytics")]
-    partial class editAnalytics
+    [Migration("20250203212454_InitialCreate")]
+    partial class InitialCreate
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -231,9 +231,15 @@ namespace Monitoring.Migrations
                     b.Property<int>("WebsiteId")
                         .HasColumnType("int");
 
+                    b.Property<int?>("WebsiteId1")
+                        .HasColumnType("int");
+
                     b.HasKey("Id");
 
                     b.HasIndex("WebsiteId");
+
+                    b.HasIndex("WebsiteId1")
+                        .IsUnique();
 
                     b.ToTable("Analytics");
                 });
@@ -246,27 +252,35 @@ namespace Monitoring.Migrations
 
                     MySqlPropertyBuilderExtensions.UseMySqlIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<int>("AnalyticsId")
+                    b.Property<int?>("AnalyticsId")
                         .HasColumnType("int");
 
-                    b.Property<DateTime>("CheckTime")
+                    b.Property<DateTime?>("CheckTime")
                         .HasColumnType("datetime(6)");
 
                     b.Property<string>("ErrorMessage")
-                        .IsRequired()
                         .HasColumnType("longtext");
 
-                    b.Property<string>("ResponseTime")
-                        .IsRequired()
-                        .HasColumnType("longtext");
+                    b.Property<int?>("ResponseTime")
+                        .HasColumnType("int");
 
-                    b.Property<string>("Status")
-                        .IsRequired()
-                        .HasColumnType("longtext");
+                    b.Property<DateTime?>("Timestamp")
+                        .HasColumnType("datetime(6)");
+
+                    b.Property<bool?>("isUp")
+                        .HasColumnType("tinyint(1)");
+
+                    b.Property<int?>("status")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("websiteId")
+                        .HasColumnType("int");
 
                     b.HasKey("Id");
 
                     b.HasIndex("AnalyticsId");
+
+                    b.HasIndex("websiteId");
 
                     b.ToTable("CheckResults");
                 });
@@ -291,6 +305,36 @@ namespace Monitoring.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Clients");
+                });
+
+            modelBuilder.Entity("Monitoring.Models.MonitoringModule.checker.checker_entity", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    MySqlPropertyBuilderExtensions.UseMySqlIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("WebsiteId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("class_name")
+                        .IsRequired()
+                        .HasColumnType("longtext");
+
+                    b.Property<string>("content")
+                        .IsRequired()
+                        .HasColumnType("longtext");
+
+                    b.Property<int>("interval")
+                        .HasColumnType("int");
+
+                    b.Property<int>("retries")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Checkers");
                 });
 
             modelBuilder.Entity("Monitoring.Models.NotificationsModule.NotificationLog", b =>
@@ -435,6 +479,10 @@ namespace Monitoring.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
+                    b.HasOne("Monitoring.Models.Website", null)
+                        .WithOne("Analytics")
+                        .HasForeignKey("Monitoring.Models.Analytics", "WebsiteId1");
+
                     b.Navigation("Website");
                 });
 
@@ -442,9 +490,11 @@ namespace Monitoring.Migrations
                 {
                     b.HasOne("Monitoring.Models.Analytics", "Analytics")
                         .WithMany("CheckResults")
-                        .HasForeignKey("AnalyticsId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("AnalyticsId");
+
+                    b.HasOne("Monitoring.Models.Website", null)
+                        .WithMany("CheckResults")
+                        .HasForeignKey("websiteId");
 
                     b.Navigation("Analytics");
                 });
@@ -480,6 +530,14 @@ namespace Monitoring.Migrations
                         .IsRequired();
 
                     b.Navigation("Websites");
+                });
+
+            modelBuilder.Entity("Monitoring.Models.Website", b =>
+                {
+                    b.Navigation("Analytics")
+                        .IsRequired();
+
+                    b.Navigation("CheckResults");
                 });
 #pragma warning restore 612, 618
         }

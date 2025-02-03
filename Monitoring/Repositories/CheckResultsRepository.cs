@@ -50,14 +50,14 @@ public class CheckResultsRepository
             query = query.Where(c => c.CheckTime <= request.endDate);
         }
 
-        if (!string.IsNullOrEmpty(request.Status)) // Ignore if empty
+        if (request.Status != null) // Ignore if empty
         {
-            query = query.Where(c => c.Status == request.Status);
+            query = query.Where(c => c.status == request.Status);
         }
 
         if (!string.IsNullOrEmpty(request.ResponseTime)) // Ignore if empty
         {
-            query = query.Where(c => c.ResponseTime == request.ResponseTime);
+            query = query.Where(c => c.ResponseTime == Int32.Parse(request.ResponseTime));
         }
 
         if (!string.IsNullOrEmpty(request.ErrorMessage)) // Ignore if empty

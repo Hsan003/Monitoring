@@ -3,10 +3,19 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Monitoring.Services;
 using Monitoring;
+using Monitoring.Models.MonitoringModule;
+using Monitoring.Repositories;
 
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddAuthorization();
+
+builder.Services.AddControllers();
+
+builder.Services
+    .AddScoped<CheckerFactory>()
+    .AddIdentityApiEndpoints<IdentityUser>()
+    .AddEntityFrameworkStores<MonitoringDbContext>();
 
 
 // Load environment variables
@@ -20,29 +29,32 @@ var connectionString = $"Server={Environment.GetEnvironmentVariable("DB_HOST")};
                        $"Password={Environment.GetEnvironmentVariable("DB_PASSWORD")};";
 
 builder.Services.AddDbContext<MonitoringDbContext>(options =>
-    options.UseMySql(connectionString, new MySqlServerVersion(new Version(8, 0, 33)))
-);
-
-builder.Services.AddIdentityApiEndpoints<IdentityUser>()
-    .AddEntityFrameworkStores<MonitoringDbContext>();
-builder.Services.AddControllers(); // <-- Add this line
+    options.UseMySql(builder.Configuration.GetConnectionString("Default"),
+ServerVersion.AutoDetect(builder.Configuration.GetConnectionString("Default"))
+    ));
 
 // Add services to the container.
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
-builder.Services.AddScoped<CheckResultsRepository>();
 builder.Services.AddScoped<AnalyticsService>();
-
+builder.Services.AddScoped<MonitoringSystem>();
+builder.Services.AddSingleton<Scheduler>(provider => 
+    new Scheduler(provider)); 
+builder.Services.AddSingleton<Scheduler>();
+builder.Services.AddScoped(typeof(IRepository<>), typeof(Repository<>));
+builder.Services.AddScoped<CheckResultsRepository>();
+builder.Services.AddScoped<MonitoringService>();
 
 var app = builder.Build();
 
-//Map Identity Routes
-app.MapIdentityApi<IdentityUser>();
-
-//Middleware
+app.UseRouting();
 app.UseAuthentication();
 app.UseAuthorization();
+
+// ENDPOINT MAPPING
+app.MapIdentityApi<IdentityUser>();
+app.MapControllers(); // Critical for controller routes
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
@@ -51,10 +63,8 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
-app.UseHttpsRedirection();
 app.UseRouting();
 
- app.MapControllers(); 
 
 
 
