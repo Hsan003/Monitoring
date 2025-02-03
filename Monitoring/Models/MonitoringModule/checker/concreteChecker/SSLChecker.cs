@@ -8,12 +8,10 @@ using System.Threading.Tasks;
 
 public class SSLChecker : IChecker
 {
-    private MonitoringDbContext _context;
     public int _retries {get; set;}
 
-        public void initialize(string content, int retries, MonitoringDbContext context)
+        public void initialize(string content, int retries)
         {
-            _context = context;
             _retries = retries;
         }
     public async Task<CheckResults> check(Website website )
@@ -79,8 +77,7 @@ public class SSLChecker : IChecker
                         }
                     }
                 }
-                _context.CheckResults.Add(checkResult);
-                await _context.SaveChangesAsync();
+                
             }
             catch (Exception ex)
             {

@@ -249,29 +249,28 @@ namespace Monitoring.Migrations
 
                     MySqlPropertyBuilderExtensions.UseMySqlIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<int>("AnalyticsId")
+                    b.Property<int?>("AnalyticsId")
                         .HasColumnType("int");
 
-                    b.Property<DateTime>("CheckTime")
+                    b.Property<DateTime?>("CheckTime")
                         .HasColumnType("datetime(6)");
 
                     b.Property<string>("ErrorMessage")
-                        .IsRequired()
                         .HasColumnType("longtext");
 
-                    b.Property<int>("ResponseTime")
+                    b.Property<int?>("ResponseTime")
                         .HasColumnType("int");
 
-                    b.Property<DateTime>("Timestamp")
+                    b.Property<DateTime?>("Timestamp")
                         .HasColumnType("datetime(6)");
 
-                    b.Property<bool>("isUp")
+                    b.Property<bool?>("isUp")
                         .HasColumnType("tinyint(1)");
 
-                    b.Property<int>("status")
+                    b.Property<int?>("status")
                         .HasColumnType("int");
 
-                    b.Property<int>("websiteId")
+                    b.Property<int?>("websiteId")
                         .HasColumnType("int");
 
                     b.HasKey("Id");
@@ -488,15 +487,11 @@ namespace Monitoring.Migrations
                 {
                     b.HasOne("Monitoring.Models.Analytics", "Analytics")
                         .WithMany("CheckResults")
-                        .HasForeignKey("AnalyticsId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("AnalyticsId");
 
                     b.HasOne("Monitoring.Models.Website", null)
                         .WithMany("CheckResults")
-                        .HasForeignKey("websiteId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("websiteId");
 
                     b.Navigation("Analytics");
                 });

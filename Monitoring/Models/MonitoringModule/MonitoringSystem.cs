@@ -26,7 +26,7 @@ namespace Monitoring.Models.MonitoringModule
                 interval = interval,
                 checker = CheckerFactory.CreateChecker(checkerClass)
             };
-            job.checker.initialize(content, retries, DbConnection);
+            job.checker.initialize(content, retries);
     
             checker_entity checkerEntity = new checker_entity
             {
@@ -51,12 +51,18 @@ namespace Monitoring.Models.MonitoringModule
             var checker = CheckerFactory.CreateChecker(checkerClass);
             return await checker.check(website);
         }
-    
+
         public void removeUrl(Website website)
         {
-            // Implementation for removing URL if needed
+            foreach (var job in Scheduler.Jobs)
+            {
+                if (job.websiteId.Id == website.Id)
+                {
+                    Scheduler.StopJob(job);
+                }
+            }
         }
-    
+
         public void StopJob(Website website, int interval, string checkerClass, string content, int retries)
         {
             MonitoringJob job = new MonitoringJob
@@ -65,7 +71,7 @@ namespace Monitoring.Models.MonitoringModule
                 interval = interval,
                 checker = CheckerFactory.CreateChecker(checkerClass)
             };
-            job.checker.initialize(content, retries, DbConnection);
+            job.checker.initialize(content, retries);
     
             Scheduler.StopJob(job);
         }

@@ -68,10 +68,11 @@ public class MonitoringService
             
         }
     }
-    public CheckResults GetCurrentStatus(int websiteId,string checkerClass)
+    public async Task<CheckResults> GetCurrentStatus(int websiteId,string checkerClass)
     {
-        var website = _websiteRepository.GetByIdAsync(websiteId).GetAwaiter().GetResult();
-        return _monitoringSystem.GetStatus(website,checkerClass).Result;
+        var website = await _websiteRepository.GetByIdAsync(websiteId);
+        var res = await _monitoringSystem.GetStatus(website,checkerClass);
+        return res;
 
     }
         

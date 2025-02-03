@@ -42,15 +42,16 @@ public sealed class Scheduler
             using (var scope = _serviceProvider.CreateScope())
             {
                 var dbContext = scope.ServiceProvider.GetRequiredService<MonitoringDbContext>();
+                var repository = new CheckResultsRepository(dbContext);
                 try
                 {
                     Console.WriteLine("Starting check...");
                     CheckResults result = await job.runCheck();
                     Console.WriteLine($"Check result: {result}");
             
-                    dbContext.CheckResults.Add(result);
+                    
                     Console.WriteLine("Saving to database...");
-                    await dbContext.SaveChangesAsync();
+                    await repository.AddAsync(result);
                     Console.WriteLine("Save completed");
                 }
                 catch (Exception ex)

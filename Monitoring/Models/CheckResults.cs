@@ -7,18 +7,18 @@ namespace Monitoring.Models;
 public class CheckResults
 {
     public int Id { get; set; }
-    public int websiteId { get; set; }
-    public HttpStatusCode status { get; set; }
+    public int? websiteId { get; set; }
+    public HttpStatusCode? status { get; set; }
     
-    public DateTime Timestamp { get; set; }
+    public DateTime? Timestamp { get; set; }
 
-    public Boolean isUp { get; set; }
+    public Boolean? isUp { get; set; }
 
-    public DateTime CheckTime { get; set; }
-    public int ResponseTime { get; set; }
-    public string ErrorMessage { get; set; }
+    public DateTime? CheckTime { get; set; }
+    public int? ResponseTime { get; set; }
+    public string? ErrorMessage { get; set; }
     
-    public int AnalyticsId { get; set; }
+    public int? AnalyticsId { get; set; }
     [JsonIgnore] // 🔴 Prevents infinite loops during JSON serialization
     public virtual Analytics Analytics { get; set; }
     

@@ -9,12 +9,10 @@ public class ContentChecker : IChecker
     {
         Timeout = TimeSpan.FromSeconds(10) 
     };
-    private  MonitoringDbContext _context;
 
     
-    public void initialize(string content,int retries, MonitoringDbContext context)
+    public void initialize(string content,int retries)
     {
-        _context = context;
         _content = content;
         _retries = retries;
 
@@ -39,8 +37,6 @@ public class ContentChecker : IChecker
                 checkResult.isUp = false;
                 checkResult.ErrorMessage = "Content not found";
             }
-            _context.CheckResults.Add(checkResult);
-            await _context.SaveChangesAsync();
         }
         catch (HttpRequestException e)
         {
@@ -50,6 +46,11 @@ public class ContentChecker : IChecker
         catch (TaskCanceledException)
         {
             checkResult.ErrorMessage = "Request timed out.";
+            checkResult.isUp = false;
+        }
+        catch (Exception e)
+        {
+            checkResult.ErrorMessage = e.Message;
             checkResult.isUp = false;
         }
 

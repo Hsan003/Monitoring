@@ -49,32 +49,10 @@ public class MonitoringController : ControllerBase
         _monitoringService.Delete(id,checkerId,HttpContext);
     }
 
-    // GET: api/monitoring/results/{websiteId}
-    // [HttpGet("results/{websiteId}")]
-    // public async Task<ActionResult<IEnumerable<CheckResults>>> GetCheckResults(int websiteId)
-    // {
-    //     try
-    //     {
-    //         var results = await _context.CheckResults
-    //             .Where(cr => cr.websiteId == websiteId)
-    //             .OrderByDescending(cr => cr.Timestamp)
-    //             .AsNoTracking()
-    //             .ToListAsync();
-    //
-    //         return Ok(results);
-    //     }
-    //     catch (Exception ex)
-    //     {
-    //         return Problem(
-    //             detail: $"Error retrieving results: {ex.Message}",
-    //             statusCode: StatusCodes.Status500InternalServerError);
-    //     }
-    // }
 
-    // GET: api/monitoring/status/{websiteId}
     [HttpGet("status/{websiteId}")]
-    public  CheckResults GetCurrentStatus(int websiteId)
+    public async  Task<CheckResults> GetCurrentStatus(int websiteId)
     {
-        return _monitoringService.GetCurrentStatus(websiteId,HttpContext.Request.Query["checkerClass"].ToString());
+        return await _monitoringService.GetCurrentStatus(websiteId,HttpContext.Request.Query["checkerClass"].ToString());
     }
 }

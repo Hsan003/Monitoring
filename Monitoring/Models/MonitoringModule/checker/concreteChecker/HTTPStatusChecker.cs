@@ -12,7 +12,7 @@ public class HTTPStatusChecker : IChecker
     
 
 
-    public void initialize(string content, int retires, MonitoringDbContext context)
+    public void initialize(string content, int retires)
     {
         timeout = 10;
         _httpClient.Timeout = TimeSpan.FromSeconds(timeout);
@@ -47,6 +47,11 @@ public class HTTPStatusChecker : IChecker
         catch (TaskCanceledException)
         {
             result.ErrorMessage = "Request timed out.";
+            result.isUp = false;
+        }
+        catch (Exception e)
+        {
+            result.ErrorMessage = e.Message;
             result.isUp = false;
         }
         Console.WriteLine("HTTPStatusChecker: " + result);
