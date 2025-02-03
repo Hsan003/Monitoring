@@ -16,10 +16,10 @@ public class SSLChecker : IChecker
             _context = context;
             _retries = retries;
         }
-    public async Task<CheckResult> check(Website website )
+    public async Task<CheckResults> check(Website website )
         {
             Console.WriteLine($"Checking SSL status for {website.Url}...");
-            CheckResult checkResult = new CheckResult
+            CheckResults checkResult = new CheckResults
             {
                 websiteId = website.Id,
                 Timestamp = DateTime.UtcNow
@@ -35,8 +35,8 @@ public class SSLChecker : IChecker
                     {
                         if (sslPolicyErrors != SslPolicyErrors.None)
                         {
-                            checkResult.error = $"SSL Policy Error: {sslPolicyErrors}";
-                            Console.WriteLine(checkResult.error);
+                            checkResult.ErrorMessage = $"SSL Policy Error: {sslPolicyErrors}";
+                            Console.WriteLine(checkResult.ErrorMessage);
                             return false;
                         }
 
@@ -50,8 +50,8 @@ public class SSLChecker : IChecker
                             var expirationDate = DateTime.Parse(cert.GetExpirationDateString());
                             if (expirationDate < DateTime.UtcNow)
                             {
-                                checkResult.error = "Certificate has expired.";
-                                Console.WriteLine(checkResult.error);
+                                checkResult.ErrorMessage = "Certificate has expired.";
+                                Console.WriteLine(checkResult.ErrorMessage);
                                 return false;
                             }
                         }
@@ -63,7 +63,7 @@ public class SSLChecker : IChecker
                     {
                         var response = httpClient.GetAsync(website.Url).Result;
                         stopwatch.Stop(); 
-                        checkResult.responseTime = (int)stopwatch.ElapsedMilliseconds;
+                        checkResult.ResponseTime = (int)stopwatch.ElapsedMilliseconds;
                         checkResult.status = response.StatusCode;
 
                         if (response.IsSuccessStatusCode)
@@ -75,7 +75,7 @@ public class SSLChecker : IChecker
                         {
                             Console.WriteLine("SSL check failed.");
                             checkResult.isUp = false;
-                            checkResult.error = "Non-successful HTTP status code received.";
+                            checkResult.ErrorMessage = "Non-successful HTTP status code received.";
                         }
                     }
                 }
@@ -85,8 +85,8 @@ public class SSLChecker : IChecker
             catch (Exception ex)
             {
                 checkResult.isUp = false;
-                checkResult.error = $"Error during SSL check: {ex.Message}";
-                Console.WriteLine(checkResult.error);
+                checkResult.ErrorMessage = $"Error during SSL check: {ex.Message}";
+                Console.WriteLine(checkResult.ErrorMessage);
             }
 
             return checkResult;

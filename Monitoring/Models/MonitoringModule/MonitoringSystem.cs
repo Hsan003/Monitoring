@@ -46,6 +46,11 @@ namespace Monitoring.Models.MonitoringModule
             Console.WriteLine("Scheduling job");
             Scheduler.ScheduleJob(job);
         }
+        public async Task<CheckResults> GetStatus(Website website , string checkerClass)
+        {
+            var checker = CheckerFactory.CreateChecker(checkerClass);
+            return await checker.check(website);
+        }
     
         public void removeUrl(Website website)
         {

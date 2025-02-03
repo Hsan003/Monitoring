@@ -45,7 +45,7 @@ public sealed class Scheduler
                 try
                 {
                     Console.WriteLine("Starting check...");
-                    CheckResult result = await job.runCheck();
+                    CheckResults result = await job.runCheck();
                     Console.WriteLine($"Check result: {result}");
             
                     dbContext.CheckResults.Add(result);

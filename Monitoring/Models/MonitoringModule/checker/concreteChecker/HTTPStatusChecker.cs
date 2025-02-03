@@ -17,9 +17,9 @@ public class HTTPStatusChecker : IChecker
         timeout = 10;
         _httpClient.Timeout = TimeSpan.FromSeconds(timeout);
     }
-    public async Task<CheckResult> check(Website website)
+    public async Task<CheckResults> check(Website website)
     {
-        CheckResult result = new CheckResult();
+        CheckResults result = new CheckResults();
         result.websiteId = website.Id;
         result.Timestamp = DateTime.Now;
         try
@@ -28,11 +28,11 @@ public class HTTPStatusChecker : IChecker
             result.status = response.StatusCode;
             if (!response.IsSuccessStatusCode)
             {
-                result.error = response.ReasonPhrase ?? "Unknown error";
+                result.ErrorMessage = response.ReasonPhrase ?? "Unknown error";
             }
             else
             {
-                result.error = null;
+                result.ErrorMessage = null;
             }
 
             result.isUp = response.IsSuccessStatusCode;
@@ -41,17 +41,17 @@ public class HTTPStatusChecker : IChecker
         }
         catch (HttpRequestException e)
         {
-            result.error = e.Message;
+            result.ErrorMessage = e.Message;
             result.isUp = false;
         }
         catch (TaskCanceledException)
         {
-            result.error = "Request timed out.";
+            result.ErrorMessage = "Request timed out.";
             result.isUp = false;
         }
         Console.WriteLine("HTTPStatusChecker: " + result);
-        if(result.error == null)
-            result.error = "No error";
+        if(result.ErrorMessage == null)
+            result.ErrorMessage = "No error";
         
         return result;
     }

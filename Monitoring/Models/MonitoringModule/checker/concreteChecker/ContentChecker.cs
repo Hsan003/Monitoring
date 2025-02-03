@@ -19,9 +19,9 @@ public class ContentChecker : IChecker
         _retries = retries;
 
     }
-    public async Task<CheckResult> check(Website website)
+    public async Task<CheckResults> check(Website website)
     {
-        CheckResult checkResult = new CheckResult
+        CheckResults checkResult = new CheckResults
         {
             websiteId = website.Id,
             Timestamp = DateTime.UtcNow
@@ -37,19 +37,19 @@ public class ContentChecker : IChecker
             else
             {
                 checkResult.isUp = false;
-                checkResult.error = "Content not found";
+                checkResult.ErrorMessage = "Content not found";
             }
             _context.CheckResults.Add(checkResult);
             await _context.SaveChangesAsync();
         }
         catch (HttpRequestException e)
         {
-            checkResult.error = e.Message;
+            checkResult.ErrorMessage = e.Message;
             checkResult.isUp = false;
         }
         catch (TaskCanceledException)
         {
-            checkResult.error = "Request timed out.";
+            checkResult.ErrorMessage = "Request timed out.";
             checkResult.isUp = false;
         }
 

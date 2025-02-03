@@ -4,6 +4,7 @@ using Microsoft.EntityFrameworkCore;
 using Monitoring.Services;
 using Monitoring;
 using Monitoring.Models.MonitoringModule;
+using Monitoring.Repositories;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -41,6 +42,9 @@ builder.Services.AddScoped<MonitoringSystem>();
 builder.Services.AddSingleton<Scheduler>(provider => 
     new Scheduler(provider)); 
 builder.Services.AddSingleton<Scheduler>();
+builder.Services.AddScoped(typeof(IRepository<>), typeof(Repository<>));
+builder.Services.AddScoped<CheckResultsRepository>();
+builder.Services.AddScoped<MonitoringService>();
 
 var app = builder.Build();
 

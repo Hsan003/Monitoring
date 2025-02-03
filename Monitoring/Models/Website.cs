@@ -23,6 +23,6 @@ public class Website
     
     public Analytics Analytics { get; set; }
     
-    public List<CheckResult> CheckResults { get; set; }
+    public List<CheckResults> CheckResults { get; set; }
 }
 
