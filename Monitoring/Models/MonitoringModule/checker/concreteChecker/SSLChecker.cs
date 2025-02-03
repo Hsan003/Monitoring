@@ -9,7 +9,10 @@ using System.Threading.Tasks;
 public class SSLChecker : IChecker
 {
     public int _retries {get; set;}
-
+    private static readonly HttpClient _httpClient = new HttpClient{
+        Timeout = TimeSpan.FromSeconds(10) 
+    };
+    
         public void initialize(string content, int retries)
         {
             _retries = retries;
@@ -25,6 +28,10 @@ public class SSLChecker : IChecker
 
             try
             {
+                HttpResponseMessage message = await _httpClient.GetAsync(website.Url);
+                checkResult.status = message.StatusCode;
+                
+                var start = DateTime.Now;
                 var stopwatch = Stopwatch.StartNew();
 
                 using (var httpClientHandler = new HttpClientHandler())
@@ -77,6 +84,8 @@ public class SSLChecker : IChecker
                         }
                     }
                 }
+                var end = DateTime.Now;
+                checkResult.ResponseTime = (int)(end - start).TotalMilliseconds;
                 
             }
             catch (Exception ex)
