@@ -24,14 +24,17 @@ public class HTTPStatusChecker : IChecker
         result.Timestamp = DateTime.Now;
         try
         {
+            var start = DateTime.Now;
             HttpResponseMessage response = await _httpClient.GetAsync(website.Url);
             result.status = response.StatusCode;
+            var end = DateTime.Now;
             if (!response.IsSuccessStatusCode)
             {
                 result.ErrorMessage = response.ReasonPhrase ?? "Unknown error";
             }
             else
             {
+                result.ResponseTime = (int)(end - start).TotalMilliseconds;
                 result.ErrorMessage = null;
             }
 

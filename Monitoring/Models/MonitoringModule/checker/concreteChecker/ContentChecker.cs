@@ -26,17 +26,23 @@ public class ContentChecker : IChecker
         };
         try
         {
+            var start = DateTime.Now;
             HttpResponseMessage response = await _httpClient.GetAsync(website.Url);
             string webSiteContent = await response.Content.ReadAsStringAsync();
+            checkResult.status = response.StatusCode;
+            var end = DateTime.Now;
             if (webSiteContent.Contains(_content))
             {
                 checkResult.isUp = true;
+                
             }
             else
             {
-                checkResult.isUp = false;
+                checkResult.isUp = true;
                 checkResult.ErrorMessage = "Content not found";
             }
+            
+            checkResult.ResponseTime = (int)(end - start).TotalMilliseconds;
         }
         catch (HttpRequestException e)
         {
