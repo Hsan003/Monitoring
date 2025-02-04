@@ -55,9 +55,9 @@ public class CheckResultsRepository
             query = query.Where(c => c.status == request.Status);
         }
 
-        if (!string.IsNullOrEmpty(request.ResponseTime)) // Ignore if empty
+        if (request.ResponseTime!=-1) // Ignore if empty
         {
-            query = query.Where(c => c.ResponseTime == Int32.Parse(request.ResponseTime));
+            query = query.Where(c => c.ResponseTime == request.ResponseTime);
         }
 
         if (!string.IsNullOrEmpty(request.ErrorMessage)) // Ignore if empty
