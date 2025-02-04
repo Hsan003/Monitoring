@@ -3,6 +3,7 @@ using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using Microsoft.AspNetCore.Identity;
 using Monitoring.Models.NotificationsModule;
+using Monitoring.Models.NotificationsModule.NotificationsChannels;
 
 namespace Monitoring.Models;
 
@@ -17,6 +18,10 @@ public class Client : IdentityUser
 
     public virtual ICollection<Website> Websites { get; set; } = new List<Website>();
 
-    [Required]
-    public virtual NotificationPreferences Preferences { get; set; }
+    public virtual List<string> NotifChannels { get; set; }
+
+    public Client()
+    {
+        NotifChannels = new List<string>();
+    }
 }

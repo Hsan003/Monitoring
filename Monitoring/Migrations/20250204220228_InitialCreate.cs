@@ -7,7 +7,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace Monitoring.Migrations
 {
     /// <inheritdoc />
-    public partial class initialMigration : Migration
+    public partial class InitialCreate : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -41,6 +41,8 @@ namespace Monitoring.Migrations
                     Id = table.Column<string>(type: "varchar(255)", nullable: false)
                         .Annotation("MySql:CharSet", "utf8mb4"),
                     Name = table.Column<string>(type: "varchar(100)", maxLength: 100, nullable: false)
+                        .Annotation("MySql:CharSet", "utf8mb4"),
+                    NotifChannels = table.Column<string>(type: "longtext", nullable: false)
                         .Annotation("MySql:CharSet", "utf8mb4"),
                     UserName = table.Column<string>(type: "varchar(256)", maxLength: 256, nullable: true)
                         .Annotation("MySql:CharSet", "utf8mb4"),
@@ -238,31 +240,6 @@ namespace Monitoring.Migrations
                 .Annotation("MySql:CharSet", "utf8mb4");
 
             migrationBuilder.CreateTable(
-                name: "NotificationPreferences",
-                columns: table => new
-                {
-                    Id = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
-                    ClientId = table.Column<string>(type: "varchar(255)", nullable: false)
-                        .Annotation("MySql:CharSet", "utf8mb4"),
-                    LatencyThreshold = table.Column<int>(type: "int", nullable: false),
-                    DowntimeThreshold = table.Column<int>(type: "int", nullable: false),
-                    ChannelsJson = table.Column<string>(type: "longtext", nullable: false)
-                        .Annotation("MySql:CharSet", "utf8mb4")
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_NotificationPreferences", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_NotificationPreferences_AspNetUsers_ClientId",
-                        column: x => x.ClientId,
-                        principalTable: "AspNetUsers",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                })
-                .Annotation("MySql:CharSet", "utf8mb4");
-
-            migrationBuilder.CreateTable(
                 name: "Websites",
                 columns: table => new
                 {
@@ -404,12 +381,6 @@ namespace Monitoring.Migrations
                 column: "websiteId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_NotificationPreferences_ClientId",
-                table: "NotificationPreferences",
-                column: "ClientId",
-                unique: true);
-
-            migrationBuilder.CreateIndex(
                 name: "IX_Websites_ClientId",
                 table: "Websites",
                 column: "ClientId");
@@ -441,9 +412,6 @@ namespace Monitoring.Migrations
 
             migrationBuilder.DropTable(
                 name: "NotificationLogs");
-
-            migrationBuilder.DropTable(
-                name: "NotificationPreferences");
 
             migrationBuilder.DropTable(
                 name: "AspNetRoles");
