@@ -12,7 +12,7 @@ namespace Monitoring.Controllers;
 
 [ApiController]
 [Route("api/[controller]")]
-[AllowAnonymous]
+[Authorize]
 public class MonitoringController : ControllerBase
 {
     private readonly MonitoringService _monitoringService;

@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Monitoring.Models;
 using Monitoring.Models.DashboardModule;
@@ -6,6 +7,7 @@ using Monitoring.Services;
 namespace Monitoring.Controllers;
 [Route("Dashboard")]
 [ApiController]
+[Authorize]
 public class DashboardController:Controller
 {  
    private readonly AnalyticsService AnalyticsService;
