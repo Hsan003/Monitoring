@@ -1,3 +1,4 @@
+using System.Net;
 using Microsoft.EntityFrameworkCore;
 using Monitoring.Models;
 using Monitoring.Models.DashboardModule;
@@ -37,25 +38,25 @@ public class CheckResultsRepository
         // Apply filters conditionally
         if (request.AnalyticsId != 0) // Only filter if WebsiteId is specified
         {
-            query = query.Where(c => c.Analytics.WebsiteId == request.AnalyticsId);
+            query = query.Where(c => c.websiteId == request.AnalyticsId);
         }
 
         if (request.startDate != Convert.ToDateTime("2000-01-01")) // Ignore if default value
         {
-            query = query.Where(c => c.CheckTime >= request.startDate);
+            query = query.Where(c => c.Timestamp >= request.startDate);
         }
 
         if (request.endDate != DateTime.Now) // Ignore if default value
         {
-            query = query.Where(c => c.CheckTime <= request.endDate);
+            query = query.Where(c => c.Timestamp <= request.endDate);
         }
 
-        if (!string.IsNullOrEmpty(request.Status)) // Ignore if empty
+        if (request.Status!="" ) // Ignore if empty
         {
-            query = query.Where(c => c.Status == request.Status);
+            query = query.Where(c => c.status == (HttpStatusCode)Enum.Parse(typeof(HttpStatusCode), request.Status, true));
         }
 
-        if (!string.IsNullOrEmpty(request.ResponseTime)) // Ignore if empty
+        if (request.ResponseTime!=-1) // Ignore if empty
         {
             query = query.Where(c => c.ResponseTime == request.ResponseTime);
         }
@@ -71,8 +72,17 @@ public class CheckResultsRepository
 
     public async Task AddAsync(CheckResults checkResult)
     {
-        await _context.CheckResults.AddAsync(checkResult);
-        await _context.SaveChangesAsync();
+        try
+        {
+            await _context.CheckResults.AddAsync(checkResult);
+            await _context.SaveChangesAsync();
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine(e.Message);
+            throw;
+        }
+        
     }
 
     public async Task UpdateAsync(CheckResults checkResult)

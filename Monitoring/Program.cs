@@ -8,13 +8,23 @@ using Microsoft.OpenApi.Models;
 using Monitoring.Services;
 using Monitoring.Models;
 using Microsoft.AspNetCore.Identity.UI.Services;
+using Monitoring;
+using Monitoring.Models.MonitoringModule;
+using Monitoring.Repositories;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // ✅ Load environment variables
+
+builder.Services.AddControllers();
+
+builder.Services.AddScoped<CheckerFactory>();
+
+
+// Load environment variables
 DotEnv.Load();
 
-// ✅ Build Connection String from Environment Variables
+// Add services
 var connectionString = $"Server={Environment.GetEnvironmentVariable("DB_HOST")};" +
                        $"Port={Environment.GetEnvironmentVariable("DB_PORT")};" +
                        $"Database={Environment.GetEnvironmentVariable("DB_NAME")};" +
@@ -97,13 +107,22 @@ builder.Services.AddSwaggerGen(options =>
 //Add Email Sender Service
 builder.Services.AddSingleton<IEmailSender<Client>, EmailSender>();
 
+// Add services to the container.
+// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
+builder.Services.AddEndpointsApiExplorer();
+
 
 // ✅ Register Services
 builder.Services.AddScoped<CheckResultsRepository>();
 builder.Services.AddScoped<AnalyticsService>();
+builder.Services.AddScoped<MonitoringSystem>();
+builder.Services.AddSingleton<Scheduler>(provider => 
+    new Scheduler(provider)); 
+builder.Services.AddSingleton<Scheduler>();
+builder.Services.AddScoped(typeof(IRepository<>), typeof(Repository<>));
+builder.Services.AddScoped<CheckResultsRepository>();
+builder.Services.AddScoped<MonitoringService>();
 
-// ✅ Register Controllers
-builder.Services.AddControllers();
 
 var app = builder.Build();
 
@@ -116,6 +135,9 @@ using (var scope = app.Services.CreateScope())
 // ✅ Map Identity Routes using `Client` as ApplicationUser
 app.MapIdentityApi<Client>();
 
+
+
+// Configure the HTTP request pipeline.
 // ✅ Configure Middleware Order
 if (app.Environment.IsDevelopment())
 {
@@ -128,6 +150,7 @@ app.UseRouting();
 app.UseAuthentication();  // ✅ Ensure JWT Token Processing Before Authorization
 app.UseAuthorization();
 app.MapControllers();
+
 
 // ✅ Run the Application
 app.Run();
