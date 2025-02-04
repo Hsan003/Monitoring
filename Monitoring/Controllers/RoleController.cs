@@ -25,7 +25,6 @@ namespace Monitoring.Controllers
         {
             var result = await _roleManager.CreateAsync(new IdentityRole(roleName));
             if (!result.Succeeded) return BadRequest(result.Errors);
-
             return Ok(new { message = "Role created" });
         }
 
