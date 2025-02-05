@@ -24,16 +24,21 @@ public class EmailSender : IEmailSender<Client>
 
     public async  Task SendPasswordResetLinkAsync(Client user, string email, string resetLink)
     {
-        string subject = "Reset Your Password";
-        string body = $"<p>To reset your password, please click <a href='{resetLink}'>here</a>.</p><p>If you did not request this, please ignore this email.</p>";
+        throw new NotImplementedException();
+    }
+
+    public async Task SendPasswordResetCodeAsync(Client user, string email, string resetToken)
+    {
+        string subject = "Password Reset Request";
+        string body = $@"
+        <p>We received a request to reset your password.</p>
+        <p>Your User ID: <strong>{user.Id}</strong></p>
+        <p>Your Reset Token: <strong>{resetToken}</strong></p>
+        <p>Use these credentials in the Reset Password API.</p>";
 
         await SendEmailAsync(email, subject, body);
     }
 
-    public Task SendPasswordResetCodeAsync(Client user, string email, string resetCode)
-    {
-        throw new NotImplementedException();
-    }
 
     public async Task SendEmailAsync(string email, string subject, string message)
     {

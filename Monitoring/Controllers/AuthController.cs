@@ -138,20 +138,24 @@ namespace Monitoring.Controllers
             if (user == null)
                 return BadRequest("Email not found.");
 
-            var token = await _userManager.GeneratePasswordResetTokenAsync(user);
-            var resetLink = Url.Action("ResetPassword", "Auth", new { token = token, email = user.Email }, Request.Scheme, Request.Host.Value);
+            var resetToken = await _userManager.GeneratePasswordResetTokenAsync(user);
+            
+            await _emailSender.SendPasswordResetCodeAsync(user, user.Email, resetToken);
 
-            await _emailSender.SendPasswordResetLinkAsync(user, user.Email, resetLink);
-
-            return Ok(new { message = "Password reset link has been sent to your email." });
+            return Ok(new { message = "Password reset instructions have been sent to your email." });
         }
+
+
         
         [HttpPost("reset-password")]
         public async Task<IActionResult> ResetPassword([FromBody] ResetPasswordDto model)
         {
-            var user = await _userManager.FindByEmailAsync(model.Email);
+            if (model.NewPassword != model.ConfirmPassword)
+                return BadRequest("Passwords do not match.");
+
+            var user = await _userManager.FindByIdAsync(model.UserId);
             if (user == null)
-                return BadRequest("Invalid request.");
+                return BadRequest("Invalid user ID.");
 
             var result = await _userManager.ResetPasswordAsync(user, model.Token, model.NewPassword);
             if (!result.Succeeded)
@@ -159,6 +163,8 @@ namespace Monitoring.Controllers
 
             return Ok(new { message = "Password has been reset successfully." });
         }
+
+
 
 
         
