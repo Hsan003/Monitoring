@@ -11,8 +11,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Monitoring.Migrations
 {
     [DbContext(typeof(MonitoringDbContext))]
-    [Migration("20250204193954_initialMigration")]
-    partial class initialMigration
+    [Migration("20250204220228_InitialCreate")]
+    partial class InitialCreate
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -259,6 +259,10 @@ namespace Monitoring.Migrations
                         .HasMaxLength(256)
                         .HasColumnType("varchar(256)");
 
+                    b.Property<string>("NotifChannels")
+                        .IsRequired()
+                        .HasColumnType("longtext");
+
                     b.Property<string>("PasswordHash")
                         .HasColumnType("longtext");
 
@@ -345,36 +349,6 @@ namespace Monitoring.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("NotificationLogs");
-                });
-
-            modelBuilder.Entity("Monitoring.Models.NotificationsModule.NotificationPreferences", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    MySqlPropertyBuilderExtensions.UseMySqlIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<string>("ChannelsJson")
-                        .IsRequired()
-                        .HasColumnType("longtext");
-
-                    b.Property<string>("ClientId")
-                        .IsRequired()
-                        .HasColumnType("varchar(255)");
-
-                    b.Property<int>("DowntimeThreshold")
-                        .HasColumnType("int");
-
-                    b.Property<int>("LatencyThreshold")
-                        .HasColumnType("int");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("ClientId")
-                        .IsUnique();
-
-                    b.ToTable("NotificationPreferences");
                 });
 
             modelBuilder.Entity("Monitoring.Models.Website", b =>
@@ -484,17 +458,6 @@ namespace Monitoring.Migrations
                     b.Navigation("Analytics");
                 });
 
-            modelBuilder.Entity("Monitoring.Models.NotificationsModule.NotificationPreferences", b =>
-                {
-                    b.HasOne("Monitoring.Models.Client", "Client")
-                        .WithOne("Preferences")
-                        .HasForeignKey("Monitoring.Models.NotificationsModule.NotificationPreferences", "ClientId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Client");
-                });
-
             modelBuilder.Entity("Monitoring.Models.Website", b =>
                 {
                     b.HasOne("Monitoring.Models.Client", "Client")
@@ -513,9 +476,6 @@ namespace Monitoring.Migrations
 
             modelBuilder.Entity("Monitoring.Models.Client", b =>
                 {
-                    b.Navigation("Preferences")
-                        .IsRequired();
-
                     b.Navigation("Websites");
                 });
 

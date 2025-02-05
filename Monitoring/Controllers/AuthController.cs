@@ -33,7 +33,20 @@ namespace Monitoring.Controllers
         [HttpPost("register")]
         public async Task<IActionResult> Register([FromBody] RegisterDto model)
         {
-            var user = new Client { UserName = model.Email, Email = model.Email, Name = model.Name, PhoneNumber = model.Phone };
+            // validate NotificationPreferences
+            var validPreferences = new List<string> { "Email" }; // List of valid preferences for now
+            if (model.NotificationChannels == null || !model.NotificationChannels.Any())
+            {
+                ModelState.AddModelError("NotificationChannels", "At least one notification channel is required.");
+                return BadRequest(ModelState);
+            }
+            if (model.NotificationChannels.Any(p => !validPreferences.Contains(p, StringComparer.OrdinalIgnoreCase)))
+            {
+                ModelState.AddModelError("NotificationChannels", $"Invalid notification channels. Valid options are: {string.Join(", ", validPreferences)}.");
+                return BadRequest(ModelState);
+            }
+
+            var user = new Client { UserName = model.Email, Email = model.Email, Name = model.Name, PhoneNumber = model.Phone, NotifChannels = model.NotificationChannels };
             var result = await _userManager.CreateAsync(user, model.Password);
 
             if (!result.Succeeded)
